@@ -1,0 +1,7 @@
+Django==3.0.8
+psycopg2==2.8.5
+django-autoslug==1.9.7
+requests==2.24.0
+dj-database-url==0.5.0
+python-decouple==3.3
+django-allauth==0.42.0

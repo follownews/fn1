@@ -1,0 +1,100 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+    
+  <div class="card">
+    <div class="card-body login-card-body">
+
+      {% get_providers as socialaccount_providers %}
+
+      {% if socialaccount_providers %}
+        <div class="socialaccount_ballot">
+          <div class="social-auth-links text-center mb-1">
+            {% include "socialaccount/snippets/provider_list_2.html" with process="login" %}
+          </div>
+        </div>
+      {% else %}
+        <p>{% blocktrans %}If you have not created an account yet, then please
+        <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+      {% endif %}
+      <h4 class="login-box-msg">{% trans "Signup" %} con tu correo</h4>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="input-group mb-3">
+          <div class="col-md-4">
+            {{ form.username.label_tag }}
+          </div>
+          <div class="col-md-8 pull-left">
+            <div class="row">
+              {% for error in username.errors %}
+                <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+                </div>
+              {% endfor %}
+            </div>
+            {{ form.username }}
+          </div>
+
+          <div class="col-md-4">
+            {{ form.email.label_tag }}
+          </div>
+          <div class="col-md-8 pull-left">
+            <div class="row">
+              {% for error in form.email.errors %}
+                <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+                </div>
+              {% endfor %}
+            </div>
+            {{ form.email }}
+          </div>
+          
+          <div class="col-md-4">
+            {{ form.password1.label_tag }}
+          </div>
+          <div class="col-md-8 pull-left">
+            <div class="row">
+              {% for error in form.password1.errors %}
+                <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+                </div>
+              {% endfor %}
+            </div>
+
+            {{ form.password1 }}
+          </div>
+          
+          <div class="col-md-4">
+            {{ form.password2.label_tag }}
+          </div>
+          <div class="col-md-8 pull-left">
+            <div class="row">
+              {% for error in form.password2.errors %}
+                <div class="alert alert-danger">
+                  <strong>{{ error|escape }}</strong>
+                </div>
+              {% endfor %}
+            </div>
+            {{ form.password2 }}
+          </div>
+        </div>
+        {% if redirect_field_value %}
+          <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary btn-block a-login">{% trans "Sign Up" %} &raquo;</button>
+            <p class="mb-1 mt-2">
+              <a href="{{ login_url }}" class="text-center a-link-pw">Ya tengo una cuenta. {% trans "Sign In" %}</a>
+            </p>
+          </div>
+      </form>
+    </div>
+  </div>
+    
+{% endblock %}
