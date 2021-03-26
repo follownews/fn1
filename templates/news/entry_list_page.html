@@ -1,0 +1,89 @@
+{% comment %}
+
+    {% load tag %}
+
+{% endcomment %}
+
+{% load static %}
+
+{% for new in page_obj %}
+
+    <div class="col-md-4 infinite-item">
+        <div class="card md-4 shadow-sm">
+        
+            {% if new.photo != None %}
+                <img src="{{ new.photo }}" onerror=this.src='{% static 'img/Sin imagen.png' %}' class="vcenter">
+            {% else %}
+                <img src="{% static 'img/Sin imagen.png' %}" class="vcenter">
+            {% endif %}
+            <div class="captionx">
+                <span class="ml-3">
+                    <i class="far fa-calendar-alt"> {{ new.timestamp }} </i>
+                </span>
+                <div class="card-body">
+                    <h4 class="text-bold">{{ new.title }}</h4>
+                </div>
+                <p class="card-text ml-2 mr-2 mb-3">
+                    {{ new.short_desc |truncatechars:120 }}
+                </p>
+                
+                {% if new.media.mini_logo_y_nombre %}
+                    <p class="ml-3 text-bold"><span><img class="nav-icon" src="{{ MEDIA_URL }}{{ new.media.media_mini_logo }}"
+                        alt="new.media.name"></span> {{new.media.name}}</p>
+                {% else %}
+                    <p class="ml-3 text-bold"><span><img class="nav-icon" src="{{ MEDIA_URL }}{{ new.media.media_mini_logo }}"
+                        alt="new.media.name"></p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    
+{% endfor %}
+
+{% comment %}
+    
+    {% if user.is_authenticated %}
+        <script type="text/javascript">
+            "use strict";
+            $(document).ready(function(){
+                const cook = "{{user.id}}";
+                $(".news").on("click", function(e){
+                    e.preventDefault();
+                    const url = $(e.target).data("link");
+                    const data = {cook, url};
+                    $.ajax({
+                        type: 'POST',
+                        crossDomain: true,
+                        url: "/",
+                        data
+                    });
+                });
+            });
+        </script>
+    {% else %}
+        <script type="text/javascript">
+            "use strict";
+            $(document).ready(function(){
+                function load_div2(){
+                    $('.thumbnail').hover(
+                            function(){
+                                $(this).find('.caption').slideDown(700); //.fadeIn(250)
+                                $(this).find('.captionx').hide();
+                            },
+                            function(){
+                                $(this).find('.caption').slideUp(50); //.fadeOut(205)
+                                $(this).find('.captionx').show();
+                            }
+                    );
+                }
+                load_div2();
+                $(document).on("eldarion-ajax:complete", function(evt, $el, data, textStatus, jqXHR) {
+                    load_div2();
+                });
+            });
+        </script>
+    {% endif %}
+
+{% endcomment %}
+    

@@ -1,0 +1,25 @@
+<div class="mediafollow-{{pk}}">
+
+  {% if mediafollow %}
+
+    <div class="col-xs-3 text-center">
+      <h3 title="Dejar de seguir medio">
+        <button type="button" class="btn btn-default btn-sm" style="background-color: limegreen;color:#fff;">
+          <span class="glyphicon glyphicon-check"></span> Siguiendo
+        </button>
+      </h3>
+    </div>
+
+  {% else %}
+
+    <div class="col-xs-3 text-center">
+      <h3 title="Seguir medio">
+        <button type="button" class="btn btn-default btn-sm">
+          <span class="glyphicon glyphicon-unchecked"></span> Seguir
+        </button>
+      </h3>
+    </div>
+
+  {% endif %}
+  
+</div>

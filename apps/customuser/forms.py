@@ -10,10 +10,10 @@ User = get_user_model()
 class ProfileForm(UserChangeForm):
     first_name = forms.CharField(label=("Nombre"))
     last_name = forms.CharField(label="Apellido")
-    birth_date = forms.DateField(label=("Fecha de nacimiento"), help_text='DD-MM-YYYY')
+    birth_date = forms.DateField(label=("Fecha de nacimiento"), help_text='DD/MM/YYYY')
     location = forms.CharField(label=("País"), required=False)
+    date_joined = forms.DateField(label=('Miembro desde:'), disabled=True)
 
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'birth_date', 'location']
-        
+        fields = ['first_name', 'last_name', 'birth_date', 'location', 'date_joined']

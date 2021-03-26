@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 
 from . import managers
 
-from ..media import models as ModelsMedia
+from ..media import models as ModelsMedia                                                   
 
 import uuid, random, time, requests, datetime
 
@@ -21,12 +21,13 @@ class News(models.Model):
     link = models.URLField()
     title = models.TextField()
     short_desc = models.TextField(null=True)
-    # tags = models.ManyToManyField("Tag", blank=True)
+    tags = models.ManyToManyField("Tag", blank=True)
     media = models.ForeignKey("media.Media", on_delete=models.CASCADE)
     language = models.ForeignKey("country.Language", null=True, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     photo = models.URLField(null=True, max_length=380)
     order = models.IntegerField(default=order_random)
+    order_in_publication = models.IntegerField(default=0)
     long_desc = models.TextField(null=True)
 
     def get_next(self):
@@ -41,19 +42,22 @@ class News(models.Model):
             return prev.first()
         return False
 
+    def __str__(self):
+        return self.title
+
     class Meta:
         verbose_name = "New"
         verbose_name_plural = "News"
         unique_together = ("link", "title")
 
 
-# class Tag(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     name = models.TextField()
+class Tag(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.TextField()
 
-#     class Meta:
-#         verbose_name = "Tag"
-#         verbose_name_plural = "Tags"
+    class Meta:
+        verbose_name = "Tag"
+        verbose_name_plural = "Tags"
 
 
 class ReadLater(models.Model):
@@ -67,10 +71,6 @@ class ReadLater(models.Model):
     class Meta:
         verbose_name = "ReadLater"
         verbose_name_plural = "ReadLaters"
-
-    def __str__(self):
-        return self.news
-
 
 class NewsWithRead(models.Model):
     # TODO: Define fields here
@@ -104,58 +104,55 @@ class FollowNew(models.Model):
     until = models.DateTimeField(null=True)
 
 
-    def save(self, *args, **kwargs):
-        new = self.news
-        out = new.short_desc
-        out = out.replace(u'\u2018', u"'")
-        out = out.replace(u'\u2019', u"'")
-        out = out.replace(u'\u201c', u'"')
-        description = out.replace(u'\u201d', u'"')
+    # def save(self, *args, **kwargs):
+    #     new = self.news
+    #     out = new.short_desc
+    #     out = out.replace(u'\u2018', u"'")
+    #     out = out.replace(u'\u2019', u"'")
+    #     out = out.replace(u'\u201c', u'"')
+    #     description = out.replace(u'\u201d', u'"')
 
-        from datetime import timedelta, datetime
-        from ..news.views import busqueda
-        duration = timedelta(days=60)
-        ahora = datetime.now()
-        hasta = ahora + duration
+    #     from datetime import timedelta, datetime
+    #     from ..news.views import busqueda
+    #     duration = timedelta(days=60)
+    #     ahora = datetime.now()
+    #     hasta = ahora + duration
 
-        if self.marked == True:
-            e = Verbs.objects.filter(news=new.pk)
-            if e.exists():
-                e = e.get()
-                self.content = e.content
-                self.until = hasta
-            else:
-                url = 'https://language.googleapis.com/v1/documents:analyzeEntities?fields=entities%2Fname&key=' + settings.API_KEY
-                headers = {
-                    'content-type': "application/json",
-                    'cache-control': "no-cache",
-                }
-                payload = "{\r\n \"document\": {\r\n  \"content\": \""+str(description)+"\",\r\n  \"type\": \"PLAIN_TEXT\"\r\n },\r\n \"encodingType\": \"UTF8\"\r\n}"
-                response = requests.request("POST", url, data=payload, headers=headers)
-                json = response.json()
-                respuesta = json
-                print(response.text)
-                keys = ''
-                list=[]
-                for each in respuesta['entities']:
-                    list.append(each['name'])
-                e1 = Verbs(news=new, content=list)
-                e1.save()
-                self.content = e1.content
-                self.until = hasta
+    #     if self.marked == True:
+    #         e = Verbs.objects.filter(news=new.pk)
+    #         if e.exists():
+    #             e = e.get()
+    #             self.content = e.content
+    #             self.until = hasta
+    #         else:
+    #             url = 'https://language.googleapis.com/v1/documents:analyzeEntities?fields=entities%2Fname&key=' + settings.API_KEY
+    #             headers = {
+    #                 'content-type': "application/json",
+    #                 'cache-control': "no-cache",
+    #             }
+    #             payload = "{\r\n \"document\": {\r\n  \"content\": \""+str(description)+"\",\r\n  \"type\": \"PLAIN_TEXT\"\r\n },\r\n \"encodingType\": \"UTF8\"\r\n}"
+    #             response = requests.request("POST", url, data=payload, headers=headers)
+    #             json = response.json()
+    #             respuesta = json
+    #             print(response.text)
+    #             keys = ''
+    #             list=[]
+    #             for each in respuesta['entities']:
+    #                 list.append(each['name'])
+    #             e1 = Verbs(news=new, content=list)
+    #             e1.save()
+    #             self.content = e1.content
+    #             self.until = hasta
 
-                busqueda(new, list)
+    #             busqueda(new, list)
 
-            super(FollowNew, self).save(*args, **kwargs)
-        else:
-            super(FollowNew, self).save(*args, **kwargs)
+    #         super(FollowNew, self).save(*args, **kwargs)
+    #     else:
+    #         super(FollowNew, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "FullNewsText"
         verbose_name_plural = "FullNewsTexts"
-
-    def __str__(self):
-        return self.news
 
 
 class MediaInterest(models.Model):
@@ -166,11 +163,8 @@ class MediaInterest(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = "Medios de interes"
-        verbose_name_plural = "Medios de Interes"
-
-    def __str__(self):
-        return self.media
+        verbose_name = "Media of interest"
+        verbose_name_plural = "Medias of interest"
 
 
 class Verbs(models.Model):
@@ -182,7 +176,6 @@ class Verbs(models.Model):
 class Meta:
     verbose_name = "Verbs"
     verbose_name_plural = "Verbs"
-
 
 def __str__(self):
     return self.news

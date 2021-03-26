@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block aside %}
+  <!-- Sidebar -->
+  <div class=" sidebar">
+    <!-- Sidebar user panel (optional) -->
+    <div class="info mt-1 text-center text-color">
+      <p class="d-block"><b>Medios</b></p>
+    </div>
+    <div class="form-group">
+      <input class="form-control search" placeholder="Buscar" />
+    </div>
+    
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class with font-awesome or any other icon font library -->
+
+        {% for media in medias %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'media' media.slug %}">
+              <img class="nav-icon" src="{{ MEDIA_URL }}{{ media.media_mini_logo }}" alt="">
+              {{ media }}
+            </a>
+          </li>
+
+        {% endfor %}
+
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+
+  <!-- Filtra las noticias de acuerdo al medio seleccionado -->
+  <script type="text/javascript">
+    var options = {
+      valueNames: [ 'name' ]
+    };
+    var userList = new list('medios', options);
+  </script>
+
+{% endblock aside %}
+
+{% block content %}
+
+  <div class="content">
+    <div class="page-header text-center">
+      <h3><a href="{{ media.url }}" target="_blank">Sitio oficial de {{ media }} </a></h3>
+    </div>
+
+    {% comment %}
+      
+      PUBLICIDAD DE GOOGLE
+      <div class="text-center" style="{% if user.is_authenticated %}padding:10px 0px 10px 0px;{% else %}margin: 20px 0px 0px 0px{% endif %}">
+        <!-- Publicidad de Google -->
+        <!-- <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> -->
+        <!-- Skyscraper horizontal 728x90 -->
+        <!-- <ins class="adsbygoogle"
+          style="display:inline-block;width:728px;height:90px"
+          data-ad-client="ca-pub-3202048402120848"
+          data-ad-slot="3423843818"></ins> -->
+        <!-- <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script> -->
+      </div>
+      
+    {% endcomment %}
+      
+    {% comment %}
+      <div class="endless_page_template">
+        {% include 'entry_list_page.html' %}
+      </div>
+    {% endcomment %}
+
+    <div class="row infinite-container">
+      {% include 'news/entry_list_page.html' %}
+    </div>
+
+    {% if page_obj.has_next %}
+      <a class="infinite-more-link" href="?page={{ page_obj.next_page_number }}">Cargando...</a>
+    {% endif %}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="{% static 'js/waypoints/lib/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/waypoints/lib/infinite.js' %}"></script>
+
+{% endblock content %}

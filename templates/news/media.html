@@ -1,0 +1,72 @@
+{% extends 'base_wo_panel.html' %}
+{% load static %}
+
+{% comment %}
+    <!-- {% load i18n %} -->
+{% endcomment %}
+
+{% block content %}
+
+  <section class="content">
+    <div id="medios">
+      <h2 class="list-header text-center">MEDIOS</h2>
+      <div class="form-group">
+        <input class="form-control search" placeholder="Buscar" />
+      </div>
+      <div class="list list-group">
+
+        {% for medio in medias %}
+
+          <li style="list-style:none;">
+            <div class="name col-sm-3">
+              <div class="panel panel-danger">
+                <div class="panel-heading text-center text-bold">
+                  {{ medio.name|upper }}
+                </div>
+                <div class="panel-body">
+                  <p>
+                    Muy pronto la descripción del medio
+                    <a href="{% url " followmedia" pk=medio.pk %}" class="ajax pull-right"
+                      data-replace=".mediafollow-{{ medio.pk }}" {% if not medio.marked %}onClick="window.location.reload()"
+                      {% endif %}>
+                      {% include "news/mediafollow.html" with pk=medio.pk mediafollow=medio.marked %}
+                    </a>
+                  </p>
+                </div>
+              </div>
+              <br>
+            </div>
+          </li>
+
+        {% endfor %}
+
+      </div>
+    </div>
+  
+    <script type="text/javascript">
+      var options = {
+        valueNames: ['name']
+      };
+      var userList = new List('medios', options);
+    </script>
+  
+    <div class="form-group">
+  
+    </div>
+  
+    <div class="row">
+      <div class="panel-group" id="medios">
+  
+      </div>
+    </div>
+  </section>
+
+  
+  {% comment %}
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+  {% endcomment %}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
+{% endblock content %}
+    

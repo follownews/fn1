@@ -1,0 +1,15 @@
+<div class="follownew-{{pk}}">
+  {% if follownew %}
+    <div class="col-xs-3 bg-three text-center pull-right" style="background-color: limegreen;color:#fff;border-right:1px solid #ddd;border-left:1px solid #ddd">
+      <h6 title="Dejar de seguir noticia">
+        <i class="glyphicon glyphicon-pushpin"></i>
+      </h6>
+    </div>
+  {% else %}
+    <div class="col-xs-3 bg-three text-center pull-right">
+      <h6 title="Seguir noticia">
+        <i class="glyphicon glyphicon-pushpin"></i>
+      </h6>
+    </div>
+  {% endif %}
+</div>

@@ -27,6 +27,7 @@
   <!-- Styles -->
   <link rel="stylesheet" href="{% static 'css/fontawesome/css/all.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/follownews.css' %}">
+  <link rel="stylesheet" href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.css' %}">
   <link rel="stylesheet" href="{% static 'css/followCustom.css' %}">
 
   <!-- Google Font: Source Sans Pro -->
@@ -34,16 +35,20 @@
 
   <!-- Favicon  -->
   <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <!-- <script src="{% static 'js/list.js' %}"></script>   Actualizado, pero aún no le veo utilidad -->
 
   <title>Follow News {% block head_title %}{% endblock %}</title>
   {% block extra_head %}
   {% endblock %}
+  {% block js %}
+  {% endblock js %}
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
 
   {% block body %}
-    <div class="wrapper main-block">
+
+    <div class="wrapper">
       <!-- Navbar -->
       <nav class="main-header navbar navbar-expand navbar-white navbar-light">
         <!-- Left navbar links -->
@@ -55,13 +60,16 @@
 
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
+
           {% if user.is_authenticated %}
+
             <li>
               <a href="{% url 'home' %}" class="btn btn-app"><i class="fas fa-home"></i>Inicio</a>
-              <a href="#" class="btn btn-app"><i class="fas fa-cog"></i>Agregar medios</a>
-              <a href="#" class="btn btn-app"><i class="fas fa-newspaper"></i>Seguir</a>
+              <a href="{% url 'medias' %}" class="btn btn-app"><i class="fas fa-cog"></i>Agregar medios</a>
+              <a href="#" class="btn btn-app"><i class="fas fa-newspaper"></i>Seguir noticias</a>
               <a href="#" class="btn btn-app"><i class="far fa-bookmark"></i>Leer más tarde</a>
-              <a href="#" class="btn btn-app" data-toggle="dropdown"><i class="fas fa-user-alt"></i>{{ user.first_name }}</a>
+              <a href="#" class="btn btn-app" data-toggle="dropdown"><i
+                  class="fas fa-user-alt"></i>{{ user.first_name }}</a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <a href="{% url 'profile' %}" class="dropdown-item">Perfil</a>
                 <div class="dropdown-divider"></div>
@@ -70,14 +78,17 @@
                 <a href="{% url 'account_logout' %}" class="dropdown-item">{% trans "Sign Out" %}</a>
               </div>
             </li>
+
           {% else %}
+
             <li>
               <a class="a-login btn btn-secondary" href="{% url 'account_login' %}" role="button">{% trans "Sign In" %}</a>
               <a class="a-login btn btn-primary" href="{% url 'account_signup' %}">{% trans "Sign Up" %}</a>
             </li>
-            {% endif %}
-          </ul>
 
+          {% endif %}
+
+        </ul>
       </nav>
       <!-- /.navbar -->
 
@@ -85,55 +96,151 @@
       <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{% url 'home' %}" class="brand-link">
-          <img src="{% static 'img/Logo FollowNews.png' %}" alt="Logo Follow News" class="brand-image img-circle elevation-3"
-            style="opacity: .9;">
+          <img src="{% static 'img/Logo FollowNews.png' %}" alt="Logo Follow News"
+            class="brand-image img-circle elevation-3" style="opacity: .9;">
           <span class="brand-text font-weight-light"><b class="font-brand">F</b>ollow <b class="font-brand">N</b>ews</span>
         </a>
-              
+
         {% block aside %}
 
         {% endblock aside %}
 
       </aside>
-      
-      <!-- Inicio       -->
-      
+
       <!-- Content Wrapper. Contains page content -->
       <div class="content-wrapper">
-        <!-- Main content -->
-        <section class="content">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
           <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-12 text-center">
+                <h5>Banner con Publicidad de Google</h5>
+                <h1 class="text-color">Tus noticias y su seguimiento en un solo lugar</h1>
+                
+                {% if media.url %}
+                  {% comment %}
+                    <a style="color: blue;" href="{{ media.url }}">Sito oficial de 
+                      <img class="nav-icon" src="{{ MEDIA_URL }}{{ media.media_mini_logo }}" alt="{{ media.name }}">
+                    </a>
+                  {% endcomment %}
 
-            {% block content %}
-          
-            {% endblock content %}
+                  <p>
+                    <a href="{{ media.url }}" class="a-link-pw2" target="_blank">
+                      {% if media.mini_logo_y_nombre %}
+                        <p class="ml-3 text-bold"><span><img class="nav-icon" src="{{ MEDIA_URL }}{{ media.media_mini_logo }}"
+                          alt="media.name"></span> {{ media.name }}</p>
+                      {% else %}
+                        <p class="ml-3 text-bold"><span><img class="nav-icon" src="{{ MEDIA_URL }}{{ media.media_mini_logo }}"
+                          alt="media.name"></p>
+                      {% endif %}
+                    </a>
+                  </p>   
 
+                {% else %}
+                  <h4 class="text-color">Todos los medios</h4>
+                {% endif %}
+                  
+              </div>
+            </div>
           </div><!-- /.container-fluid -->
         </section>
-        <!-- /.content -->
+
+        <!-- Main content  -->
+        <section class="content">
+          <div class="container-fluid">
+            <div class="row">
+
+              {% block content %}
+              
+                {% if messages %}
+
+                  <div>
+                    <strong>Messages:</strong>
+                    <ul>
+
+                      {% for message in messages %}
+                        <li>{{message}}</li>
+                      {% endfor %}
+
+                    </ul>
+                  </div>
+
+                {% endif %}
+
+              {% endblock content %}
+
+            </div>
+            <!-- /.row -->
+          </div>
+          <!-- /.container-fluid -->
+        </section>
+        <!-- /.Content -->
+
+        <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+          <i class="fas fa-chevron-up"></i>
+        </a>
       </div>
       <!-- /.content-wrapper -->
-    
-      <!-- Fin -->
-    
-      <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
-        <i class="fas fa-chevron-up"></i>
-      </a>
     </div>
     <!-- ./wrapper -->
+
   {% endblock body %}
 
   {% block extra_body %}
-  
-  <!-- REQUIRED SCRIPTS -->
-  <!-- jQuery -->
-  <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
-  <!-- Bootstrap -->
-  <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  
-  <script src="{% static 'js/adminlte.js' %}"></script>
-  
+
+    <!-- REQUIRED SCRIPTS -->
+    <!-- jQuery -->
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <script src="{% static 'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+    <script src="{% static 'js/adminlte.js' %}"></script>
+
+    <!-- <script src="{% static "js/vendors/jquery-2.2.0.js" %}" ></script>  Sin actualizar -->
+    <script src="{% static 'js/vendors/jquery-3.5.1.js' %}"></script> <!-- Actualizado -->
+    <!-- <script src="{% static 'js/vendors/bootstrap.js' %}"></script>  Este afecta los menú dropdown -->
+    <script src="{% static 'js/jquery.slimscroll.min.js' %}"></script> <!-- Sin actualizar -->
+    <!-- <script src="{% static 'js/app.js' %}" ></script>   Sin actualizar. Quita la funcionalidad al Scrollbar del Sidebar Menu -->
+    <script src="{% static 'js/vendors/eldarion-ajax-handlers.js' %}"></script> <!-- Sin actualizar -->
+    <script src="{% static 'js/vendors/eldarion-ajax-core.js' %}"></script> <!-- Sin actualizar -->
+    <script src="{% static 'js/bootstrap-switch.js' %}"></script> <!-- Actualizado -->
+
+    {% if user.is_authenticated %}
+
+      <script type="text/javascript">
+        "use strict";
+      </script>
+
+    {% else %}
+
+      <script type="text/javascript">
+        "use strict";
+        $(document).ready(function () {
+          function load_div() {
+            $("[rel='tooltip']").tooltip();
+            $('.thumbnail').hover(
+              function () {
+                $(this).find('.caption').slideDown(700); //.fadeIn(250)
+                $(this).find('.captionx').hide();
+              },
+              function () {
+                $(this).find('.caption').slideUp(50); //.fadeOut(205)
+                $(this).find('.captionx').show();
+              }
+            );
+          }
+          load_div();
+          $(document).on("eldarion-ajax:complete", function (evt, $el, data, textStatus, jqXHR) {
+            load_div();
+          });
+        });
+      </script>
+
+    {% endif %}
+
   {% endblock extra_body %}
+
 </body>
 
 </html>

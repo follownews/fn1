@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load i18n %}
+<!-- {% load staticfiles %} -->
+{% load static %}
+
+{% block aside %}
+  <ul class="list-header">
+    {% for media in medias %}
+      <li>
+         <a href="#">{{ media }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock aside %}
+
+{% block content %}
+  {% if media_name %}
+    <section class="content-header">
+      <h2>{{ media_name }}</h2>
+    </section>
+  {% endif %}
+  <!-- Main content -->
+
+  {% load el_pagination_tags %}
+
+    {% paginate news_list %}
+
+      <div id="entries" class="endless_page_template">
+
+        {% for news in news_list %}
+        
+          <a href="{{ news.link }}" title="Ver noticia" target="_blank">
+            <div class="col-md-4 {{ news.id }}_id">
+              <div class="thumbnail">
+                <div class="caption">
+                  <h4>{{ news.title }}</h4>
+                  <p class="text-justify">{{ news.short_desc }}</p>
+                  <p class="text-justify text-bold">{{news.media.name}}</p>
+                </div>
+                {% if news.photo %}
+                  <img src="{{ news.photo }}" width="100%" class="vcenter">
+                {% endif %}
+                <div class="captionx">
+                  <h4>{{ news.title }}</h4>
+                  <p class="text-justify">{{ news.short_desc }}</p>
+                  <p class="text-justify text-bold">{{news.media.name}}</p>
+                </div>
+              </div>
+              <div>
+                {% if user.is_authenticated %}
+                  <a href="{% url "follownew" pk=news.pk %}" class="ajax" data-replace=".follownew-{{ news.pk }}">
+                    {% include "follownew.html" with pk=news.id follownew=news.follownew %}
+                  </a>
+                  <a href="{% url "readlater" pk=news.pk %}" class="ajax" data-replace=".readlater-{{ news.pk }}">
+                    {% include "readlater.html" with pk=news.id readlater=news.readlater %}
+                  </a>
+                {% else %}
+                  <a href="#" data-toggle="modal" data-target="#myModal">
+                    <input type="checkbox" disabled title="Inicia sesión para poder seguir la noticia"> Seguir Noticia
+                  </a>
+                  <a href="#" data-toggle="modal" data-target="#myModal">
+                    <input type="checkbox" disabled title="Inicia sesión para poder leer más tarde"> Leer más tarde
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        
+        {% endfor %}
+
+      </div>
+
+      <div>
+        <button class="btn btn-block btn-default">{% show_more %}</button>
+      </div>
+
+      <!-- <script src="http://code.jquery.com/jquery-latest.js"></script> -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="{% static 'el-pagination/js/el-pagination.js' %}"></script>
+      <script>
+        $.endlessPaginate({
+          paginateOnScroll: true
+          //paginateOnScrollChunkSize: 5
+        });
+      </script>
+{% endblock content %}
