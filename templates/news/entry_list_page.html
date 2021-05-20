@@ -1,9 +1,3 @@
-{% comment %}
-
-    {% load tag %}
-
-{% endcomment %}
-
 {% load static %}
 
 {% for new in page_obj %}
@@ -12,9 +6,9 @@
         <div class="card md-4 shadow-sm">
         
             {% if new.photo != None %}
-                <img src="{{ new.photo }}" onerror=this.src='{% static 'img/Sin imagen.png' %}' class="vcenter">
+                <img src="{{ new.photo }}" onerror=this.src='{% static 'img/Sin imagen.png' %}' class="img-fluid">
             {% else %}
-                <img src="{% static 'img/Sin imagen.png' %}" class="vcenter">
+                <img src="{% static 'img/Sin imagen.png' %}" class="img-fluid">
             {% endif %}
             <div class="captionx">
                 <span class="ml-3">

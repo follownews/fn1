@@ -13,15 +13,14 @@ class Media(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=200)
     url = models.URLField()
-    languages = models.ManyToManyField("country.Language", blank=True)
+    # languages = models.ManyToManyField("country.Language", blank=True)
     country = models.ForeignKey("country.Country", related_name='medias', on_delete=models.CASCADE)
-    # city = models.ForeignKey("country.City", null=True, blank=True, related_name='medias')
     slug = AutoSlugField(populate_from='name', unique=True)
     visible = models.BooleanField('¿Tiene vista previa?', default=True)
     media_mini_logo = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
     mini_logo_y_nombre = models.BooleanField('Mostrar ninilogo y nombre', default=True)
     media_hi_logo = models.ImageField(upload_to=user_directory_path, null=True, blank=True)
-    read = models.BooleanField('Noticia leída', default=False)
+    # read = models.BooleanField('Noticia leída', default=False)
 
     class Meta:
         verbose_name = "Media"

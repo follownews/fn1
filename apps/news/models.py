@@ -23,27 +23,28 @@ class News(models.Model):
     short_desc = models.TextField(null=True)
     tags = models.ManyToManyField("Tag", blank=True)
     media = models.ForeignKey("media.Media", on_delete=models.CASCADE)
-    language = models.ForeignKey("country.Language", null=True, on_delete=models.CASCADE)
+    # language = models.ForeignKey("country.Language", null=True, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     photo = models.URLField(null=True, max_length=380)
     order = models.IntegerField(default=order_random)
     order_in_publication = models.IntegerField(default=0)
     long_desc = models.TextField(null=True)
 
-    def get_next(self):
-        next = News.objects.filter(id__gt=self.id)
-        if next:
-            return next.first()
-        return False
+    # Los siguiente métodos los anulé porque no los voy a utilizar
+    # def get_next(self):
+    #     next = News.objects.filter(id__gt=self.id)
+    #     if next:
+    #         return next.first()
+    #     return False
 
-    def get_prev(self):
-        prev = News.objects.filter(id__lt=self.id).order_by('-id')
-        if prev:
-            return prev.first()
-        return False
+    # def get_prev(self):
+    #     prev = News.objects.filter(id__lt=self.id).order_by('-id')
+    #     if prev:
+    #         return prev.first()
+    #     return False
 
     def __str__(self):
-        return self.title
+        return '%s, %s' % (self.title, self.short_desc)
 
     class Meta:
         verbose_name = "New"
@@ -80,7 +81,7 @@ class NewsWithRead(models.Model):
     short_desc = models.TextField(null=True)
     # tags = models.ManyToManyField("Tag", blank=True)
     media = models.ForeignKey("media.Media", on_delete=models.CASCADE)
-    language = models.ForeignKey("country.Language", null=True, on_delete=models.CASCADE)
+    # language = models.ForeignKey("country.Language", null=True, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     photo = models.URLField(null=True)
     order = models.IntegerField(default=order_random)

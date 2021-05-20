@@ -12,11 +12,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # path('', news_views.home, name="home"),
     path('', news_views.home, name="home"),
     path('accounts/profile/', customuser_views.profile, name="profile"),
     path('es-co/<str:slug>/', news_views.media, name='media'),
-    url('medias/list/', news_views.medias, name='medias'),
+    path('medias/list/', news_views.medias, name='medias'),
     # surl('media/follow/(?P<pk>[A-Fa-f0-9]{8}-?[A-Fa-f0-9]{4}-?4[A-Fa-f0-9]{3}-?[89abAB][a-fA-F0-9]{3}-?[a-fA-F0-9]{12})/', news_views.view_follow_media, name="followmedia"),
 
     # path('settings/', news_views.settings, name='settings'),

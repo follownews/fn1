@@ -26,14 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '(fi4kuzg&jwb+-r)40q@1x^v@ijp1xaym+jrn_3_ce)ls(s2st'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+# Eliminar la variable string_if_invalid que sólo se debe usar en modo DEBUG
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.1.7']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'django_pdb',   # Only for debug
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,8 +49,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.twitter',
-    # 'el_pagination',
     'rest_framework',
+    'debug_toolbar',    # Only for debug
     'apps.customuser',
     'apps.news',
     'apps.country',
@@ -67,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # Este middleware debe estar de último. Only for Debug
     # 'corsheaders.middleware.CorsMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',     Parece que está deprecado para la versión de Django
 ]
@@ -207,3 +210,82 @@ SOCIAL_AUTH_TWITTER_SECRET = config('SOCIAL_AUTH_TWITTER_SECRET')
 
 SOCIAL_AUTH_FACEBOOK_KEY = config('SOCIAL_AUTH_FACEBOOK_KEY')
 SOCIAL_AUTH_FACEBOOK_SECRET = config('SOCIAL_AUTH_FACEBOOK_SECRET')
+
+INTERNAL_IPS = [
+    '127.0.0.1',
+    '192.168.1.7',
+]
+
+
+# Hay que configurar los ADMINS y MANAGERS para que funcione como debe ser
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'simple': {
+            'format': '[%(asctime)s] %(levelname)s %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'verbose': {
+            'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'development_logfile': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.FileHandler',
+            'filename': 'log/django_dev.log',
+            'formatter': 'verbose'
+        },
+        'production_logfile': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'log/django_production.log',
+            'maxBytes' : 1024*1024*100, # 100MB
+            'backupCount' : 5,
+            'formatter': 'simple'
+        },
+        'dba_logfile': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_false','require_debug_true'],
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': 'log/django_dba.log',
+            'formatter': 'simple'
+        },
+    },
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['console'],
+    },  
+    'loggers': {
+        'follownews': {
+            'handlers': ['development_logfile','production_logfile'],
+         },
+        'dba': {
+            'handlers': ['dba_logfile'],
+        },
+        'django': {
+            'handlers': ['development_logfile','production_logfile'],
+        },
+        'py.warnings': {
+            'handlers': ['development_logfile'],
+        },
+    }
+}

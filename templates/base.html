@@ -68,6 +68,7 @@
               <a href="{% url 'medias' %}" class="btn btn-app"><i class="fas fa-cog"></i>Agregar medios</a>
               <a href="#" class="btn btn-app"><i class="fas fa-newspaper"></i>Seguir noticias</a>
               <a href="#" class="btn btn-app"><i class="far fa-bookmark"></i>Leer más tarde</a>
+              <a href="#" class="btn btn-app"><i class="far fa-bell"></i>Notificaciones</a>
               <a href="#" class="btn btn-app" data-toggle="dropdown"><i
                   class="fas fa-user-alt"></i>{{ user.first_name }}</a>
               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -118,11 +119,6 @@
                 <h1 class="text-color">Tus noticias y su seguimiento en un solo lugar</h1>
                 
                 {% if media.url %}
-                  {% comment %}
-                    <a style="color: blue;" href="{{ media.url }}">Sito oficial de 
-                      <img class="nav-icon" src="{{ MEDIA_URL }}{{ media.media_mini_logo }}" alt="{{ media.name }}">
-                    </a>
-                  {% endcomment %}
 
                   <p>
                     <a href="{{ media.url }}" class="a-link-pw2" target="_blank">
